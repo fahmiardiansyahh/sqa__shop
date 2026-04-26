@@ -207,13 +207,6 @@ Menyimpan detail item di setiap pesanan.
 | `harga_satuan` | DECIMAL(12,2) | Harga per unit |
 | `subtotal` | DECIMAL(12,2) | Subtotal (jumlah × harga) |
 
----
-
-## 📸 Screenshot
-
-> _Tambahkan screenshot aplikasi di sini setelah deployment._
-
----
 
 ## 📝 Catatan
 

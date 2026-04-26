@@ -15,11 +15,19 @@ CREATE TABLE IF NOT EXISTS users (
     nama_lengkap VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'pembeli') NOT NULL DEFAULT 'pembeli',
     alamat TEXT,
     no_telepon VARCHAR(20),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================
+-- Data Sampel: Admin User
+-- Email: admin@sqashop.com | Password: admin123
+-- ============================================
+INSERT INTO users (nama_lengkap, email, password, role) VALUES
+('Admin SQA Shop', 'admin@sqashop.com', '$2y$10$4FIYXRnYB.qAFaKKon859uSW8jcM9gMpx09lAc.K/dz12I5Pj/262', 'admin');
 
 -- ============================================
 -- Tabel: products

@@ -23,13 +23,17 @@
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item"><a class="nav-link active" href="index.php"><i class="fas fa-home"></i> Beranda</a></li>
                 <?php if (isLoggedIn()): ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="checkout.php">
-                            <i class="fas fa-shopping-cart"></i> Keranjang
-                            <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
-                        </a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="riwayat.php"><i class="fas fa-history"></i> Riwayat</a></li>
+                    <?php if (isAdmin()): ?>
+                        <li class="nav-item"><a class="nav-link" href="admin/dashboard.php" style="color:#FD79A8 !important;"><i class="fas fa-shield-alt"></i> Admin Panel</a></li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="checkout.php">
+                                <i class="fas fa-shopping-cart"></i> Keranjang
+                                <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="riwayat.php"><i class="fas fa-history"></i> Riwayat</a></li>
+                    <?php endif; ?>
                     <li class="nav-item">
                         <a class="nav-link" href="logout.php">
                             <i class="fas fa-sign-out-alt"></i> Logout (<?= htmlspecialchars($_SESSION['user_nama']); ?>)

@@ -6,6 +6,8 @@ Aplikasi **E-Commerce sederhana** yang dibangun untuk keperluan pembelajaran **S
 
 ## ✨ Fitur Utama
 
+### 🛍️ Sisi Pembeli
+
 | Fitur | Deskripsi |
 |---|---|
 | 🔐 **Register & Login** | Registrasi akun baru dan autentikasi pengguna dengan hashing password (bcrypt) |
@@ -16,6 +18,16 @@ Aplikasi **E-Commerce sederhana** yang dibangun untuk keperluan pembelajaran **S
 | 🚪 **Logout** | Mengakhiri sesi pengguna |
 | ✅ **Validasi Form** | Validasi client-side (jQuery) dan server-side (PHP) |
 | 📱 **Responsive** | Desain responsif menggunakan Bootstrap 4, bisa diakses dari desktop maupun mobile |
+
+### 🛡️ Sisi Admin
+
+| Fitur | Deskripsi |
+|---|---|
+| 📊 **Dashboard** | Statistik ringkas: total produk, total pesanan, total pendapatan, dan peringatan stok rendah |
+| 📦 **Kelola Produk (CRUD)** | Tambah, edit, dan hapus produk. Form dilengkapi live preview |
+| 📈 **Manajemen Stok** | Monitor stok produk dengan indikator warna (hijau/kuning/merah) |
+| 📋 **Kelola Pesanan** | Lihat semua pesanan dan ubah status (pending → diproses → dikirim → selesai / dibatalkan) |
+| 🔒 **Role-Based Access** | Pemisahan hak akses antara admin dan pembeli. Admin tidak bisa diakses oleh pembeli |
 
 ---
 
@@ -33,22 +45,29 @@ Aplikasi **E-Commerce sederhana** yang dibangun untuk keperluan pembelajaran **S
 
 ```
 sqa_shop/
+├── admin/                         # 🛡️ Panel Admin
+│   ├── dashboard.php              # Dashboard statistik admin
+│   ├── products.php               # Halaman kelola produk (list)
+│   ├── product_form.php           # Form tambah / edit produk
+│   ├── process_product.php        # Proses CRUD produk
+│   ├── orders.php                 # Halaman kelola pesanan
+│   └── process_order.php          # Proses update status pesanan
 ├── css/
-│   └── style.css              # Custom stylesheet
+│   └── style.css                  # Custom stylesheet (termasuk admin styles)
 ├── js/
-│   └── app.js                 # Client-side logic (cart, validasi, dll)
-├── config.php                 # Konfigurasi database & helper functions
-├── database.sql               # SQL schema & data sampel
-├── index.php                  # Halaman beranda (katalog produk)
-├── login.php                  # Halaman login
-├── process_login.php          # Proses autentikasi login
-├── register.php               # Halaman registrasi
-├── process_register.php       # Proses registrasi akun baru
-├── checkout.php               # Halaman checkout / keranjang
-├── process_checkout.php       # Proses pembuatan pesanan
-├── riwayat.php                # Halaman riwayat pesanan
-├── logout.php                 # Proses logout
-└── README.md                  # Dokumentasi proyek
+│   └── app.js                     # Client-side logic (cart, validasi, dll)
+├── config.php                     # Konfigurasi database & helper functions
+├── database.sql                   # SQL schema & data sampel
+├── index.php                      # Halaman beranda (katalog produk)
+├── login.php                      # Halaman login
+├── process_login.php              # Proses autentikasi login (+ redirect admin)
+├── register.php                   # Halaman registrasi
+├── process_register.php           # Proses registrasi akun baru
+├── checkout.php                   # Halaman checkout / keranjang
+├── process_checkout.php           # Proses pembuatan pesanan
+├── riwayat.php                    # Halaman riwayat pesanan
+├── logout.php                     # Proses logout
+└── README.md                      # Dokumentasi proyek
 ```
 
 ---
@@ -103,7 +122,7 @@ Buka **phpMyAdmin** (atau MySQL client lainnya), lalu jalankan file `database.sq
 mysql -u root -p < database.sql
 ```
 
-> File `database.sql` akan otomatis membuat database `sqa_shop` beserta tabel-tabel dan data sampel produk.
+> File `database.sql` akan otomatis membuat database `sqa_shop` beserta tabel-tabel, data sampel produk, dan **akun admin default**.
 
 ### 4. Konfigurasi Database
 
@@ -126,17 +145,34 @@ Pastikan web server (Apache) dan MySQL sudah **running**, lalu buka browser dan 
 http://localhost/sqa_shop
 ```
 
+### 🔑 Akun Default
+
+| Role | Email | Password |
+|---|---|---|
+| **Admin** | `admin@sqashop.com` | `admin123` |
+| **Pembeli** | *(Daftar melalui halaman Register)* | *(Pilihan pengguna)* |
+
+> 💡 Login sebagai **admin** akan otomatis diarahkan ke **Admin Dashboard** (`/admin/dashboard.php`).
+
 ---
 
 ## 🧪 Panduan Penggunaan (untuk Testing)
 
-### Alur Pengujian Dasar
+### Alur Pengujian Pembeli
 
 ```
 Register → Login → Lihat Produk → Tambah ke Keranjang → Checkout → Cek Riwayat → Logout
 ```
 
+### Alur Pengujian Admin
+
+```
+Login (admin) → Dashboard → Kelola Produk (CRUD) → Kelola Pesanan (Ubah Status) → Logout
+```
+
 ### Skenario Testing yang Bisa Dicoba
+
+#### 🛍️ Sisi Pembeli
 
 | No | Skenario | Halaman |
 |---|---|---|
@@ -153,6 +189,21 @@ Register → Login → Lihat Produk → Tambah ke Keranjang → Checkout → Cek
 | 11 | Akses halaman checkout tanpa login | `checkout.php` |
 | 12 | Logout dan cek sesi berakhir | `logout.php` |
 
+#### 🛡️ Sisi Admin
+
+| No | Skenario | Halaman |
+|---|---|---|
+| 13 | Login sebagai admin dan redirect ke dashboard | `login.php` |
+| 14 | Melihat statistik di dashboard (total produk, pesanan, pendapatan) | `admin/dashboard.php` |
+| 15 | Menambahkan produk baru dengan data valid | `admin/product_form.php` |
+| 16 | Menambahkan produk dengan harga 0 (validasi) | `admin/product_form.php` |
+| 17 | Mengedit produk yang sudah ada | `admin/product_form.php?id=1` |
+| 18 | Menghapus produk | `admin/products.php` |
+| 19 | Mengubah status pesanan (pending → diproses → dikirim → selesai) | `admin/orders.php` |
+| 20 | Membatalkan pesanan | `admin/orders.php` |
+| 21 | Akses halaman admin tanpa login sebagai admin (proteksi role) | `admin/dashboard.php` |
+| 22 | Cek indikator stok rendah (produk dengan stok < 10) | `admin/products.php` |
+
 ---
 
 ## 📊 Struktur Database
@@ -166,6 +217,7 @@ Menyimpan data pengguna yang terdaftar.
 | `nama_lengkap` | VARCHAR(100) | Nama lengkap |
 | `email` | VARCHAR(100) | Email (unik) |
 | `password` | VARCHAR(255) | Password (bcrypt hash) |
+| `role` | ENUM | `admin` atau `pembeli` (default: `pembeli`) |
 | `alamat` | TEXT | Alamat (opsional) |
 | `no_telepon` | VARCHAR(20) | Nomor telepon |
 | `created_at` | TIMESTAMP | Tanggal daftar |
@@ -214,6 +266,8 @@ Menyimpan detail item di setiap pesanan.
 - Password pengguna di-hash menggunakan **bcrypt** (`password_hash`).
 - Keranjang belanja disimpan di **localStorage** browser (client-side).
 - Gambar produk menggunakan layanan [Picsum Photos](https://picsum.photos/) sebagai placeholder.
+- Akun admin default: **`admin@sqashop.com`** / **`admin123`** — dibuat otomatis saat import `database.sql`.
+- Halaman admin dilindungi oleh middleware `requireAdmin()` yang mengecek role pengguna.
 
 ---
 

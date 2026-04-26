@@ -43,4 +43,15 @@ function getFlash() {
     }
     return null;
 }
+
+function isAdmin() {
+    return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
+}
+
+function requireAdmin() {
+    if (!isLoggedIn() || !isAdmin()) {
+        setFlash('danger', 'Akses ditolak! Anda bukan admin.');
+        redirect('/sqa_shop/index.php');
+    }
+}
 ?>

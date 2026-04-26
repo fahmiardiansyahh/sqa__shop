@@ -11,7 +11,7 @@ if (empty($email) || empty($password)) {
     redirect('login.php');
 }
 
-$stmt = $conn->prepare("SELECT id, nama_lengkap, email, password FROM users WHERE email = ?");
+$stmt = $conn->prepare("SELECT id, nama_lengkap, email, password, role FROM users WHERE email = ?");
 $stmt->bind_param("s", $email);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -22,8 +22,15 @@ if ($result->num_rows === 1) {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_nama'] = $user['nama_lengkap'];
         $_SESSION['user_email'] = $user['email'];
-        setFlash('success', 'Selamat datang, ' . htmlspecialchars($user['nama_lengkap']) . '!');
-        redirect('index.php');
+        $_SESSION['user_role'] = $user['role'];
+        
+        if ($user['role'] === 'admin') {
+            setFlash('success', 'Selamat datang, Admin ' . htmlspecialchars($user['nama_lengkap']) . '!');
+            redirect('admin/dashboard.php');
+        } else {
+            setFlash('success', 'Selamat datang, ' . htmlspecialchars($user['nama_lengkap']) . '!');
+            redirect('index.php');
+        }
     }
 }
 
